@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="overlay" id="overlay" hidden></div>
+
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <span class="brand-mark">SD</span>
+        <div>
+          <p class="brand-name">Campus Hub</p>
+          <p class="brand-tag">Student portal</p>
+        </div>
+      </div>
+
+      <nav class="nav" aria-label="Main">
+        <button class="nav-item is-active" data-view="dashboard" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-9.5Z"
+            />
+          </svg>
+          Dashboard
+        </button>
+        <button class="nav-item" data-view="courses" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M4 5.5A1.5 1.5 0 0 1 5.5 4H12v16H5.5A1.5 1.5 0 0 1 4 18.5v-13ZM12 4h6.5A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5H12V4Z"
+            />
+          </svg>
+          Courses
+        </button>
+        <button class="nav-item" data-view="assignments" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M8 3h8a2 2 0 0 1 2 2v14l-6-3-6 3V5a2 2 0 0 1 2-2Zm2 5h4v2h-4V8Zm0 4h4v2h-4v-2Z"
+            />
+          </svg>
+          Assignments
+        </button>
+        <button class="nav-item" data-view="studyplan" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M7 3h10a2 2 0 0 1 2 2v14H5V5a2 2 0 0 1 2-2Zm0 4h10v2H7V7Zm0 4h6v2H7v-2Z"
+            />
+          </svg>
+          Study Plan
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <p>Need help?</p>
+        <a href="#dashboard">Contact academic office</a>
+      </div>
+    </aside>
+
+    <div class="app">
+      <header class="topbar">
+        <button class="menu-btn" id="menuBtn" type="button" aria-label="Open menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <div class="welcome">
+          <p class="eyebrow" id="semesterLabel">Semester</p>
+          <h1 id="studentName">Satvik Devgan</h1>
+        </div>
+        <div class="topbar-meta">
+          <span class="chip" id="programChip"></span>
+          <div class="avatar" id="avatar" aria-hidden="true"></div>
+        </div>
+      </header>
+
+      <main>
+        <section id="view-dashboard" class="view is-visible" aria-labelledby="dash-title">
+          <div class="section-head">
+            <h2 id="dash-title">Overview</h2>
+            <p>Attendance, academics, and this week’s load at a glance.</p>
+          </div>
+
+          <div class="stat-grid">
+            <article class="card attendance-card">
+              <div class="card-head">
+                <h3>Attendance</h3>
+                <span class="badge" id="attendanceBadge">On track</span>
+              </div>
+              <p class="metric" id="attendanceValue">0%</p>
+              <p class="metric-sub" id="attendanceSub"></p>
+              <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" id="attendanceBar">
+                <span class="progress-fill" id="attendanceFill"></span>
+              </div>
+              <ul class="legend" id="attendanceLegend"></ul>
+            </article>
+
+            <article class="card cgpa-card">
+              <div class="card-head">
+                <h3>CGPA</h3>
+                <span class="badge badge-soft">Cumulative</span>
+              </div>
+              <p class="metric" id="cgpaValue">0.00</p>
+              <p class="metric-sub" id="cgpaSub"></p>
+              <div class="cgpa-scale">
+                <span>0</span>
+                <div class="scale-track">
+                  <span class="scale-fill" id="cgpaFill"></span>
+                  <span class="scale-marker" id="cgpaMarker"></span>
+                </div>
+                <span>10</span>
+              </div>
+            </article>
+          </div>
+
+          <div class="split-grid">
+            <article class="card">
+              <div class="card-head">
+                <h3>This week</h3>
+              </div>
+              <ul class="timeline" id="weekList"></ul>
+            </article>
+            <article class="card">
+              <div class="card-head">
+                <h3>Upcoming deadlines</h3>
+              </div>
+              <ul class="deadline-list" id="deadlinePreview"></ul>
+            </article>
+          </div>
+
+          <article class="card study-preview">
+            <div class="card-head">
+              <h3>Today’s study plan</h3>
+              <button class="text-link" type="button" data-view="studyplan">Open planner</button>
+            </div>
+            <ul class="timeline" id="todayPlanList"></ul>
+          </article>
+        </section>
+
+        <section id="view-courses" class="view" hidden aria-labelledby="courses-title">
+          <div class="section-head">
+            <h2 id="courses-title">Courses</h2>
+            <p>Enrolled papers for the current semester.</p>
+          </div>
+          <div class="course-grid" id="courseGrid"></div>
+        </section>
+
+        <section id="view-assignments" class="view" hidden aria-labelledby="assign-title">
+          <div class="section-head">
+            <h2 id="assign-title">Assignments</h2>
+            <p>Track submissions and remaining work.</p>
+          </div>
+          <div class="table-wrap card">
+            <table>
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Course</th>
+                  <th>Due</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="assignmentBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="view-studyplan" class="view" hidden aria-labelledby="plan-title">
+          <div class="section-head">
+            <h2 id="plan-title">Study Plan</h2>
+            <p>Add sessions, set timings, and keep your week dynamic. Plans save on this device.</p>
+          </div>
+
+          <form class="card plan-form" id="planForm">
+            <input type="hidden" id="planId" value="" />
+            <div class="form-grid">
+              <label>
+                Subject
+                <select id="planSubject" required></select>
+              </label>
+              <label>
+                What to study
+                <input id="planTopic" type="text" maxlength="80" required placeholder="e.g. ER diagrams, revision" />
+              </label>
+              <label>
+                Day
+                <select id="planDay" required></select>
+              </label>
+              <label>
+                Start
+                <input id="planStart" type="time" required />
+              </label>
+              <label>
+                End
+                <input id="planEnd" type="time" required />
+              </label>
+              <label>
+                Notes
+                <input id="planNotes" type="text" maxlength="120" placeholder="Optional — chapter, room, goal" />
+              </label>
+            </div>
+            <p class="form-error" id="planError" hidden></p>
+            <div class="form-actions">
+              <button class="btn-primary" id="planSubmit" type="submit">Add session</button>
+              <button class="btn-ghost" id="planCancel" type="button" hidden>Cancel edit</button>
+            </div>
+          </form>
+
+          <div class="plan-toolbar">
+            <label>
+              Filter
+              <select id="planFilter">
+                <option value="all">All days</option>
+              </select>
+            </label>
+            <p class="muted" id="planCount"></p>
+          </div>
+          <div class="plan-list" id="planList"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
