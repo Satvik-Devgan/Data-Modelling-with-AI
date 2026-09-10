@@ -1,0 +1,164 @@
+import java.util.Scanner;
+
+/**
+ * PalindromeChecker
+ * ------------------
+ * A menu-driven console tool that checks whether user-supplied data
+ * (a number, a strict string, or a free-form sentence/phrase) is a
+ * palindrome. Designed to run in any plain Java compiler/runner
+ * (single file, no external dependencies).
+ *
+ * Flow per the spec:
+ *   1. System check - ask the user what type of data to check.
+ *   2. Reverse the input.
+ *   3. Compare the original input to the reversed output.
+ *   4. Display "Yes ... is a Palindrome" / "No ... is not a Palindrome".
+ *
+ * Invalid, blank, and edge-case inputs are caught and reported clearly
+ * instead of crashing the program.
+ */
+public class PalindromeChecker {
+
+    private static final Scanner scanner = new Scanner(System.in);
+
+    public static void main(String[] args) {
+        printBanner();
+        boolean running = true;
+
+        while (running) {
+            printMenu();
+            int choice = readMenuChoice();
+
+            if (choice == 0) {
+                System.out.println("\nExiting Palindrome Checker. Goodbye!");
+                running = false;
+                continue;
+            }
+            if (choice == -1) {
+                // Invalid, non-numeric menu input already reported by readMenuChoice()
+                continue;
+            }
+
+            try {
+                switch (choice) {
+                    case 1 -> checkNumber();
+                    case 2 -> checkString();
+                    case 3 -> checkSentence();
+                    default -> System.out.println("Result: Invalid menu option. Please choose 0-3.");
+                }
+            } catch (PalindromeException pe) {
+                // Expected validation/edge-case errors -> clear, concise message
+                System.out.println("Error: " + pe.getMessage());
+            } catch (Exception e) {
+                // Safety net for any unforeseen failure; checker keeps running
+                System.out.println("Error: Unable to perform check (" + e.getClass().getSimpleName() + ").");
+            }
+
+            System.out.println("------------------------------------------------");
+        }
+        scanner.close();
+    }
+
+    // ---------------------------------------------------------------
+    // Menu / UI helpers  (Step 1: system check - what to check)
+    // ---------------------------------------------------------------
+
+    private static void printBanner() {
+        System.out.println("==================================================");
+        System.out.println("              PALINDROME CHECKER                 ");
+        System.out.println("==================================================");
+    }
+
+    private static void printMenu() {
+        System.out.println("\nWhat would you like to check?");
+        System.out.println(" 1  - Number      (e.g. 12321)");
+        System.out.println(" 2  - String      (exact, case-sensitive, e.g. Madam)");
+        System.out.println(" 3  - Sentence    (ignores case, spaces & punctuation, e.g. \"A man a plan a canal Panama\")");
+        System.out.println(" 0  - Exit");
+        System.out.print("Enter choice: ");
+    }
+
+    private static int readMenuChoice() {
+        String line = scanner.nextLine().trim();
+        try {
+            return Integer.parseInt(line);
+        } catch (NumberFormatException e) {
+            System.out.println("Result: Invalid input. Please enter a whole number for the menu choice.");
+            return -1;
+        }
+    }
+
+    // ---------------------------------------------------------------
+    // Checks per data type
+    // ---------------------------------------------------------------
+
+    private static void checkNumber() {
+        System.out.print("Enter a number: ");
+        String raw = scanner.nextLine().trim();
+
+        if (raw.isEmpty()) {
+            throw new PalindromeException("Input cannot be blank.");
+        }
+        // Accepts optional leading '-' and an optional decimal point, digits only otherwise.
+        if (!raw.matches("-?\\d+(\\.\\d+)?")) {
+            throw new PalindromeException("Invalid number format: \"" + raw + "\" is not a valid number.");
+        }
+
+        evaluate("Number", raw, raw);
+    }
+
+    private static void checkString() {
+        System.out.print("Enter a string: ");
+        String raw = scanner.nextLine().trim();
+
+        if (raw.isEmpty()) {
+            throw new PalindromeException("Input cannot be blank.");
+        }
+
+        // Strict check: exact characters, case-sensitive, spaces count.
+        evaluate("String", raw, raw);
+    }
+
+    private static void checkSentence() {
+        System.out.print("Enter a sentence/phrase: ");
+        String raw = scanner.nextLine().trim();
+
+        if (raw.isEmpty()) {
+            throw new PalindromeException("Input cannot be blank.");
+        }
+
+        // Normalize: keep letters/digits only, lowercase, ignore spaces & punctuation.
+        String normalized = raw.toLowerCase().replaceAll("[^a-z0-9]", "");
+
+        if (normalized.isEmpty()) {
+            throw new PalindromeException("No letters or digits found to compare (input was only spaces/punctuation).");
+        }
+
+        evaluate("Sentence", raw, normalized);
+    }
+
+    // ---------------------------------------------------------------
+    // Steps 2-4: reverse, compare, and display the result
+    // ---------------------------------------------------------------
+
+    private static void evaluate(String dataType, String displayValue, String valueToCheck) {
+        String reversed = new StringBuilder(valueToCheck).reverse().toString();
+        boolean isPalindrome = valueToCheck.equals(reversed);
+
+        System.out.println("Original : " + displayValue);
+        System.out.println("Reversed : " + reversed);
+
+        if (isPalindrome) {
+            System.out.println("Yes the following " + dataType + " is a Palindrome: " + displayValue);
+        } else {
+            System.out.println("No the following " + dataType + " is not a Palindrome: " + displayValue);
+        }
+    }
+
+    /** Custom unchecked exception for expected validation/edge-case errors. */
+    private static class PalindromeException extends RuntimeException {
+        public PalindromeException(String message) {
+            super(message);
+        }
+    }
+}
